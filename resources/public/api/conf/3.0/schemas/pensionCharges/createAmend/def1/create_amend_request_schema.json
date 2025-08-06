@@ -98,7 +98,7 @@
                       "type": "string",
                       "example": "Q123456"
                     }
-                  },
+                  }
                 },
                 "required": [
                   "providerName",
@@ -301,7 +301,7 @@
                       "type": "string",
                       "example": "Q123456"
                     }
-                  },
+                  }
                 },
                 "required": [
                   "providerName",
