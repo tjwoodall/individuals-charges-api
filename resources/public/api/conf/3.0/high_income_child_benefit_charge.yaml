@@ -1,0 +1,19 @@
+get:
+  $ref: "./high_income_child_benefit_charge_retrieve.yaml"
+  summary: Retrieve High Income Child Benefit Charge Submission [test only]
+  security:
+    - User-Restricted:
+        - read:self-assessment
+put:
+  $ref: "./high_income_child_benefit_charge_create_amend.yaml"
+  summary: Create or Amend High Income Child Benefit Charge Submission [test only]
+  security:
+    - User-Restricted:
+        - write:self-assessment
+
+delete:
+  $ref: "./high_income_child_benefit_charge_delete.yaml"
+  summary: Delete High Income Child Benefit Charge Submission [test only]
+  security:
+    - User-Restricted:
+        - write:self-assessment
