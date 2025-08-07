@@ -1,4 +1,4 @@
-summary: Retrieve High Income Child Benefit Charge Submission
+summary: Retrieve High Income Child Benefit Charge Submission{{#maybeTestOnly "3.0 high-income-child-benefit-charge-retrieve"}}{{/maybeTestOnly}}
 description: |
   This endpoint allows a customer to retrieve the information used to calculate a charge from High Income Child Benefit earners.
   A National Insurance number and tax year must be provided.
