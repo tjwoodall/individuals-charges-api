@@ -1,4 +1,4 @@
-summary: Delete High Income Child Benefit Charge Submission
+summary: Delete High Income Child Benefit Charge Submission{{#maybeTestOnly "3.0 high-income-child-benefit-charge-delete"}}{{/maybeTestOnly}}
 description: |
   This endpoint allows a customer to delete the information used to calculate a charge from High Income Child Benefit earners. A National Insurance number and tax year must be provided.
   
