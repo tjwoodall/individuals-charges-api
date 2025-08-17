@@ -8,10 +8,6 @@ get:
 put:
   $ref: "./pension_charges_create_amend.yaml"
 
-  security:
-    - User-Restricted:
-        - write:self-assessment
-
 delete:
   $ref: "./pension_charges_delete.yaml"
 
