@@ -1,4 +1,4 @@
-summary: "Create or Amend High Income Child Benefit Charge Submission [test only]"
+summary: Create or Amend High Income Child Benefit Charge Submission
 description: |
   This endpoint provides the ability to create or update the relevant information used to calculate a charge from High Income Child Benefit earners.
   A National Insurance number and tax year must be provided.
