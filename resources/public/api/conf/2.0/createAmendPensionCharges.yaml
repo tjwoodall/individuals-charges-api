@@ -28,7 +28,7 @@ requestBody:
   content:
     application/json:
       schema:
-        oneOf:
+        anyOf:
         - $ref: "./schemas/createAmendPension/def1/create_amend_request_schema.json"
         - $ref: "./schemas/createAmendPension/def2/create_amend_request_schema.json"
       examples:
