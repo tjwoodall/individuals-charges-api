@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Tax years 2024-25 onwards {{#unless (releasedInProduction 'removeLifetimePension')}} [Test Only] {{/unless}}",
   "description": "Retrieve Pension Charges",
   "type": "object",

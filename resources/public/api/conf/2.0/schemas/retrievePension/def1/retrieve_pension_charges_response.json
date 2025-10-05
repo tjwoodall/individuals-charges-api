@@ -1,5 +1,4 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
   "title": "Given any tax year 2023-24 and before",
   "description": "Retrieve Pension Charges",
   "type": "object",
