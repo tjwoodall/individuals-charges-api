@@ -44,12 +44,10 @@ responses:
             - $ref: './schemas/retrievePensionCharges/def2/response.json'
         examples:
           Example Response for 2023-24 and before:
-            value:
-              $ref: './examples/retrievePensionCharges/def1/response.json'
+            externalValue: './examples/retrievePensionCharges/def1/response.json'
 
           Example Response for 2024-25 and after:
-            value:
-              $ref: './examples/retrievePensionCharges/def2/response.json'
+            externalValue: './examples/retrievePensionCharges/def2/response.json'
   "400":
     description: Bad request
     headers:
