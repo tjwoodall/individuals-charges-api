@@ -39,7 +39,7 @@ responses:
     content:
       application/json:
         schema:
-          oneOf:
+          anyOf:
             - $ref: './schemas/retrievePensionCharges/def1/response.json'
             - $ref: './schemas/retrievePensionCharges/def2/response.json'
         examples:
