@@ -82,7 +82,7 @@
           "description": "Details of overseas pension provider.",
           "type": "array",
           "items": {
-            "oneOf": [
+            "anyOf": [
               {
                 "title": "qualifyingRecognisedOverseasPensionScheme",
                 "type": "object",
@@ -313,7 +313,7 @@
           "description": "Details of overseas pension provider.",
           "type": "array",
           "items": {
-            "oneOf": [
+            "anyOf": [
               {
                 "title": "qualifyingRecognisedOverseasPensionScheme",
                 "type": "object",
