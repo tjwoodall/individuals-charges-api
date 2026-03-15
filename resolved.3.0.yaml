@@ -56,17 +56,14 @@ paths:
         - write:self-assessment
   /individuals/charges/high-income-child-benefit/{nino}/{taxYear}:
     get:
-      summary: Retrieve High Income Child Benefit Charge Submission
       security:
       - User-Restricted:
         - read:self-assessment
     put:
-      summary: Create or Amend High Income Child Benefit Charge Submission
       security:
       - User-Restricted:
         - write:self-assessment
     delete:
-      summary: Delete High Income Child Benefit Charge Submission
       security:
       - User-Restricted:
         - write:self-assessment
