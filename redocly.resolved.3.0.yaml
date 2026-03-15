@@ -1,0 +1,2853 @@
+openapi: 3.0.3
+info:
+  version: '3.0'
+  title: Individuals Charges (MTD)
+  description: |
+    The following groups of endpoints are stateful in the Sandbox:
+    * [Pension Charges](#tag/Pension-Charges)
+    * [High Income Child Benefit Charge Submission](#tag/High-Income-Child-Benefit-Charge-Submission)
+
+    # Send fraud prevention data
+    HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
+
+    <div class="govuk-warning-text warning-icon-fix">
+      <span class="govuk-warning-text__icon warning-icon-ui-fix" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-warning-text__assistive">Warning</span>
+        You are required by law to submit header data for this API. This includes all associated APIs and endpoints.
+      </strong>
+    </div>
+
+    [Check the data you need to send](/guides/fraud-prevention/). You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0) during initial development and as part of your quality assurance checks.
+
+    # Mapping APIs to Self Assessment tax return forms
+    Some parameters in this API map to box numbers in one or more Self Assessment tax return forms. To learn more and to download this mapping information as a CSV file, go to [income-tax-mtd-changelog/mapping](https://github.com/hmrc/income-tax-mtd-changelog?tab=readme-ov-file#mapping-apis-to-self-assessment-tax-return-forms) on GitHub.
+
+    # Changelog
+    You can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/#readme) on GitHub.
+
+    # Support
+
+    * Direct reports of bugs or errors in Production or Sandbox code, or queries about HMRC business functionality (such as how a specific field is used by HMRC or why it is needed) to the [Software Development Support Team (SDST)](https://developer.service.hmrc.gov.uk/developer/support).
+    * Send queries or feedback related to the design of the APIs (including recommended changes) using the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/issues) GitHub page.
+    * <a href="/contact/report-technical-problem?newTab=true&service=api-documentation-frontend" target="_blank">Is this page not working properly? (opens in new tab)</a>
+servers:
+  - url: https://test-api.service.hmrc.gov.uk
+    description: Sandbox
+  - url: https://api.service.hmrc.gov.uk
+    description: Production
+tags:
+  - name: Pension Charges
+    description: Resources relating to an individual's pension charges.
+  - name: High Income Child Benefit Charge Submission
+    description: Resources relating to an individual's high income child benefit charge submission.
+paths:
+  /individuals/charges/pensions/{nino}/{taxYear}:
+    get:
+      summary: Retrieve Pension Charges
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      description: |
+        This endpoint enables you to retrieve previously populated charges for pensions. A National Insurance number and tax year must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.  
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                         |
+        |----------------------------------|--------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates a successful pension charge response.  |
+        | NOT_FOUND                        | Simulates a scenario where no data can be found. |
+        | STATEFUL                         | Performs a stateful retrieve.                    |
+      tags:
+        - Pension Charges
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: &ref_6
+            type: string
+            example: TC663795B
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years. The minimum tax year is 2021-22. No gaps are allowed, for example, 2020-22 is not valid.
+          schema: &ref_7
+            type: string
+            example: 2021-22
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: &ref_8
+            type: string
+            enum:
+              - application/vnd.hmrc.3.0+json
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: &ref_19
+            type: string
+            example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: &ref_9
+            type: string
+            example: '-'
+          required: false
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: &ref_0
+                type: string
+                example: c75f40a6-a3df-4429-a697-471eeec46435
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: &ref_1
+                type: string
+                example: Sun, 01 Jan 2023 23:59:59 GMT
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: &ref_2
+                type: string
+                example: Sun, 02 Jul 2023 23:59:59 GMT
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: &ref_3
+                type: string
+                example: https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/individuals-charges-api
+              required: false
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $schema: http://json-schema.org/draft-04/schema#
+                    title: Tax years before 2024-25
+                    description: Retrieve Pension Charges
+                    type: object
+                    properties:
+                      submittedOn:
+                        type: string
+                        format: YYYY-MM-DDThh:mm:ss.sssZ
+                        description: An ISO-8601 compliant date-time representing when pension charges were submitted.
+                        example: '2021-04-04T01:01:01.000Z'
+                      pensionSavingsTaxCharges:
+                        type: object
+                        description: Object holding the booleans for annual allowance.
+                        properties:
+                          pensionSchemeTaxReference:
+                            type: array
+                            description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                            items:
+                              pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                              type: string
+                              example: 00123456RA
+                          lumpSumBenefitTakenInExcessOfLifetimeAllowance:
+                            type: object
+                            description: Object holding the amount and tax paid on lump sum benefit in excess of the lifetime allowance.
+                            properties:
+                              amount:
+                                description: The amount of the lump sum benefit taken in excess of the lifetime allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                              taxPaid:
+                                description: The amount of tax to be paid on the lump sum benefit taken in excess of the lifetime allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                            required:
+                              - amount
+                              - taxPaid
+                          benefitInExcessOfLifetimeAllowance:
+                            type: object
+                            description: Object holding the amount and tax paid on benefit in excess of the lifetime allowance.
+                            properties:
+                              amount:
+                                description: The amount of the benefit taken in excess of the lifetime allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                              taxPaid:
+                                description: The tax to be paid on the benefit taken in excess of the lifetime allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                            required:
+                              - amount
+                              - taxPaid
+                        required:
+                          - pensionSchemeTaxReference
+                      pensionSchemeOverseasTransfers:
+                        type: object
+                        description: Object holding the transfer of overseas pension to another pension scheme.
+                        properties:
+                          overseasSchemeProvider:
+                            description: Details of overseas pension provider.
+                            type: array
+                            items:
+                              title: item
+                              type: object
+                              properties:
+                                providerName:
+                                  description: The name of the pension provider
+                                  type: string
+                                  example: Overseas Pensions Plc
+                                providerAddress:
+                                  description: The address of the pension provider.
+                                  type: string
+                                  example: 111 Main Street, Any Town, Any City
+                                providerCountryCode:
+                                  description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                  type: string
+                                  example: CYM
+                                qualifyingRecognisedOverseasPensionScheme:
+                                  type: array
+                                  description: A list of one or more qualifying overseas pension scheme reference numbers for overseas pensions contributions.
+                                  items:
+                                    pattern: ^[Q]{1}[0-9]{6}$
+                                    type: string
+                                    example: Q123456
+                                pensionSchemeTaxReference:
+                                  type: array
+                                  description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                                  items:
+                                    pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                                    type: string
+                                    example: 00123456RA
+                              required:
+                                - providerName
+                                - providerAddress
+                                - providerCountryCode
+                          transferCharge:
+                            description: The amount the pension provider charges to transfer the pension. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                          transferChargeTaxPaid:
+                            description: The amount of tax paid on the transfer charge. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                        required:
+                          - overseasSchemeProvider
+                          - transferCharge
+                          - transferChargeTaxPaid
+                      pensionSchemeUnauthorisedPayments:
+                        type: object
+                        description: Object holding tax on unauthorised payment.
+                        properties:
+                          pensionSchemeTaxReference:
+                            type: array
+                            description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                            items:
+                              pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                              type: string
+                              example: 00123456RA
+                          surcharge:
+                            type: object
+                            description: The unauthorised payments surcharge.
+                            properties:
+                              amount:
+                                description: The amount of the unauthorised payment. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                              foreignTaxPaid:
+                                description: The amount of foreign tax paid in pounds sterling. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                            required:
+                              - amount
+                              - foreignTaxPaid
+                          noSurcharge:
+                            type: object
+                            description: Object holding unauthorised payments for no surcharge.
+                            properties:
+                              amount:
+                                description: The amount of the unauthorised payment. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                              foreignTaxPaid:
+                                description: The amount of foreign tax paid in pounds sterling. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                            required:
+                              - amount
+                              - foreignTaxPaid
+                      pensionContributions:
+                        type: object
+                        description: Object holding payments paid into a pension
+                        properties:
+                          pensionSchemeTaxReference:
+                            type: array
+                            description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                            items:
+                              pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                              type: string
+                              example: 00123456RA
+                          inExcessOfTheAnnualAllowance:
+                            description: The amount of the in excess of the annual allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                          annualAllowanceTaxPaid:
+                            description: The amount of tax paid on annual allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                          isAnnualAllowanceReduced:
+                            description: A boolean indicating whether annual allowance has been reduced. The value must be true or false. If isAnnualAllowanceReduced is true then either taperedAnnualAllowance or moneyPurchasedAllowance must be true as well.
+                            type: boolean
+                            example: 'false'
+                          taperedAnnualAllowance:
+                            description: A boolean indicating whether tapered annual allowance is lower than the standard annual allowance. The value must be true or false.
+                            type: boolean
+                            example: 'true'
+                          moneyPurchasedAllowance:
+                            description: 'A boolean indicating whether the person has paid the maximum amount allowed for their reduced allowance, based on Money Purchase Annual Allowance (MPAA). The value must be true or false. For example: false'
+                            type: boolean
+                            example: 'false'
+                        required:
+                          - pensionSchemeTaxReference
+                          - inExcessOfTheAnnualAllowance
+                          - annualAllowanceTaxPaid
+                      overseasPensionContributions:
+                        type: object
+                        description: Object holding the contributions paid into overseas pension.
+                        properties:
+                          overseasSchemeProvider:
+                            description: Details of overseas pension provider.
+                            type: array
+                            items:
+                              title: item
+                              type: object
+                              properties:
+                                providerName:
+                                  description: The name of the pension provider
+                                  type: string
+                                  example: Overseas Pensions Plc
+                                providerAddress:
+                                  description: The address of the pension provider.
+                                  type: string
+                                  example: 111 Main Street, Any Town, Any City
+                                providerCountryCode:
+                                  description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                  type: string
+                                  example: CYM
+                                qualifyingRecognisedOverseasPensionScheme:
+                                  type: array
+                                  description: A list of one or more qualifying overseas pension scheme reference numbers for overseas pensions contributions.
+                                  items:
+                                    pattern: ^[Q]{1}[0-9]{6}$
+                                    type: string
+                                    example: Q123456
+                                pensionSchemeTaxReference:
+                                  type: array
+                                  description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                                  items:
+                                    pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                                    type: string
+                                    example: 00123456RA
+                              required:
+                                - providerName
+                                - providerAddress
+                                - providerCountryCode
+                          shortServiceRefund:
+                            description: The amount of short service refund for overseas pension contributions. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                          shortServiceRefundTaxPaid:
+                            description: The amount of tax paid on short service refund. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                        required:
+                          - overseasSchemeProvider
+                          - shortServiceRefund
+                          - shortServiceRefundTaxPaid
+                    additionalProperties: false
+                    required:
+                      - submittedOn
+                  - $schema: http://json-schema.org/draft-04/schema#
+                    title: Tax years 2024-25 onwards
+                    description: Retrieve Pension Charges
+                    type: object
+                    properties:
+                      submittedOn:
+                        type: string
+                        format: YYYY-MM-DDThh:mm:ss.sssZ
+                        description: An ISO-8601 compliant date-time representing when pension charges were submitted.
+                        example: '2021-04-04T01:01:01.000Z'
+                      pensionSchemeOverseasTransfers:
+                        type: object
+                        description: Object holding the transfer of overseas pension to another pension scheme.
+                        properties:
+                          overseasSchemeProvider:
+                            description: Details of overseas pension provider.
+                            type: array
+                            items:
+                              title: item
+                              type: object
+                              properties:
+                                providerName:
+                                  description: The name of the pension provider
+                                  type: string
+                                  example: Overseas Pensions Plc
+                                providerAddress:
+                                  description: The address of the pension provider.
+                                  type: string
+                                  example: 111 Main Street, Any Town, Any City
+                                providerCountryCode:
+                                  description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                  type: string
+                                  example: CYM
+                                qualifyingRecognisedOverseasPensionScheme:
+                                  type: array
+                                  description: A list of one or more qualifying overseas pension scheme reference numbers for overseas pensions contributions.
+                                  pattern: ^[Q]{1}[0-9]{6}$
+                                  items:
+                                    type: string
+                                    example: Q123456
+                                pensionSchemeTaxReference:
+                                  type: array
+                                  description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                                  items:
+                                    pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                                    type: string
+                                    example: 00123456RA
+                              required:
+                                - providerName
+                                - providerAddress
+                                - providerCountryCode
+                          transferCharge:
+                            description: The amount the pension provider charges to transfer the pension. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                          transferChargeTaxPaid:
+                            description: The amount of tax paid on the transfer charge. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                        required:
+                          - overseasSchemeProvider
+                          - transferCharge
+                          - transferChargeTaxPaid
+                      pensionSchemeUnauthorisedPayments:
+                        type: object
+                        description: Object holding tax on unauthorised payment.
+                        properties:
+                          pensionSchemeTaxReference:
+                            type: array
+                            description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                            items:
+                              pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                              type: string
+                              example: 00123456RA
+                          surcharge:
+                            type: object
+                            description: The unauthorised payments surcharge.
+                            properties:
+                              amount:
+                                description: The amount of the unauthorised payment. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                              foreignTaxPaid:
+                                description: The amount of foreign tax paid in pounds sterling. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                            required:
+                              - amount
+                              - foreignTaxPaid
+                          noSurcharge:
+                            type: object
+                            description: Object holding unauthorised payments for no surcharge.
+                            properties:
+                              amount:
+                                description: The amount of the unauthorised payment. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                              foreignTaxPaid:
+                                description: The amount of foreign tax paid in pounds sterling. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                                type: number
+                                example: '1999.99'
+                            required:
+                              - amount
+                              - foreignTaxPaid
+                      pensionContributions:
+                        type: object
+                        description: Object holding payments paid into a pension
+                        properties:
+                          pensionSchemeTaxReference:
+                            type: array
+                            description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                            items:
+                              pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                              type: string
+                              example: 00123456RA
+                          inExcessOfTheAnnualAllowance:
+                            description: The amount of the in excess of the annual allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                          annualAllowanceTaxPaid:
+                            description: The amount of tax paid on annual allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                          isAnnualAllowanceReduced:
+                            description: A boolean indicating whether annual allowance has been reduced. The value must be true or false. If isAnnualAllowanceReduced is true then either taperedAnnualAllowance or moneyPurchasedAllowance must be true as well.
+                            type: boolean
+                            example: 'false'
+                          taperedAnnualAllowance:
+                            description: A boolean indicating whether tapered annual allowance is lower than the standard annual allowance. The value must be true or false.
+                            type: boolean
+                            example: 'true'
+                          moneyPurchasedAllowance:
+                            description: 'A boolean indicating whether the person has paid the maximum amount allowed for their reduced allowance, based on Money Purchase Annual Allowance (MPAA). The value must be true or false. For example: false'
+                            type: boolean
+                            example: 'false'
+                        required:
+                          - pensionSchemeTaxReference
+                          - inExcessOfTheAnnualAllowance
+                          - annualAllowanceTaxPaid
+                      overseasPensionContributions:
+                        type: object
+                        description: Object holding the contributions paid into overseas pension.
+                        properties:
+                          overseasSchemeProvider:
+                            description: Details of overseas pension provider.
+                            type: array
+                            items:
+                              title: item
+                              type: object
+                              properties:
+                                providerName:
+                                  description: The name of the pension provider
+                                  type: string
+                                  example: Overseas Pensions Plc
+                                providerAddress:
+                                  description: The address of the pension provider.
+                                  type: string
+                                  example: 111 Main Street, Any Town, Any City
+                                providerCountryCode:
+                                  description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                  type: string
+                                  example: CYM
+                                qualifyingRecognisedOverseasPensionScheme:
+                                  type: array
+                                  description: A list of one or more qualifying overseas pension scheme reference numbers for overseas pensions contributions.
+                                  items:
+                                    pattern: ^[Q]{1}[0-9]{6}$
+                                    type: string
+                                    example: Q123456
+                                pensionSchemeTaxReference:
+                                  type: array
+                                  description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                                  items:
+                                    pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                                    type: string
+                                    example: 00123456RA
+                              required:
+                                - providerName
+                                - providerAddress
+                                - providerCountryCode
+                          shortServiceRefund:
+                            description: The amount of short service refund for overseas pension contributions. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                          shortServiceRefundTaxPaid:
+                            description: The amount of tax paid on short service refund. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                            type: number
+                            example: '1999.99'
+                        required:
+                          - overseasSchemeProvider
+                          - shortServiceRefund
+                          - shortServiceRefundTaxPaid
+                    additionalProperties: false
+                    required:
+                      - submittedOn
+              examples:
+                Example Response for 2023-24 and before:
+                  value:
+                    submittedOn: '2020-07-27T17:00:19Z'
+                    pensionSavingsTaxCharges:
+                      pensionSchemeTaxReference:
+                        - 00123456RA
+                        - 00123456RB
+                      lumpSumBenefitTakenInExcessOfLifetimeAllowance:
+                        amount: 100
+                        taxPaid: 100
+                      benefitInExcessOfLifetimeAllowance:
+                        amount: 100
+                        taxPaid: 100
+                    pensionSchemeOverseasTransfers:
+                      overseasSchemeProvider:
+                        - providerName: Overseas Pensions Plc.
+                          providerAddress: 111 Main Street, Any Town, Any City
+                          providerCountryCode: CYM
+                          qualifyingRecognisedOverseasPensionScheme:
+                            - Q123456
+                      transferCharge: 100
+                      transferChargeTaxPaid: 100
+                    pensionSchemeUnauthorisedPayments:
+                      pensionSchemeTaxReference:
+                        - 00123456RA
+                        - 00123456RB
+                      surcharge:
+                        amount: 100.99
+                        foreignTaxPaid: 100.99
+                      noSurcharge:
+                        amount: 100.99
+                        foreignTaxPaid: 100.99
+                    pensionContributions:
+                      pensionSchemeTaxReference:
+                        - 00123456RA
+                        - 00123456RB
+                      inExcessOfTheAnnualAllowance: 100
+                      annualAllowanceTaxPaid: 100
+                      isAnnualAllowanceReduced: true
+                      taperedAnnualAllowance: true
+                      moneyPurchasedAllowance: false
+                    overseasPensionContributions:
+                      overseasSchemeProvider:
+                        - providerName: Overseas Pensions Plc
+                          providerAddress: 111 Main Street, Any Town, Any City
+                          providerCountryCode: CYM
+                          qualifyingRecognisedOverseasPensionScheme:
+                            - Q123456
+                      shortServiceRefund: 123
+                      shortServiceRefundTaxPaid: 123
+                Example Response for 2024-25 and after:
+                  value:
+                    submittedOn: '2024-07-27T17:00:19Z'
+                    pensionSchemeOverseasTransfers:
+                      overseasSchemeProvider:
+                        - providerName: Overseas Pensions Plc.
+                          providerAddress: 111 Main Street, Any Town, Any City
+                          providerCountryCode: CYM
+                          qualifyingRecognisedOverseasPensionScheme:
+                            - Q123456
+                      transferCharge: 100
+                      transferChargeTaxPaid: 100
+                    pensionSchemeUnauthorisedPayments:
+                      pensionSchemeTaxReference:
+                        - 00123456RA
+                        - 00123456RB
+                      surcharge:
+                        amount: 100.99
+                        foreignTaxPaid: 100.99
+                      noSurcharge:
+                        amount: 100.99
+                        foreignTaxPaid: 100.99
+                    pensionContributions:
+                      pensionSchemeTaxReference:
+                        - 00123456RA
+                        - 00123456RB
+                      inExcessOfTheAnnualAllowance: 100
+                      annualAllowanceTaxPaid: 100
+                      isAnnualAllowanceReduced: true
+                      taperedAnnualAllowance: true
+                      moneyPurchasedAllowance: false
+                    overseasPensionContributions:
+                      overseasSchemeProvider:
+                        - providerName: Overseas Pensions Plc
+                          providerAddress: 111 Main Street, Any Town, Any City
+                          providerCountryCode: CYM
+                          qualifyingRecognisedOverseasPensionScheme:
+                            - Q123456
+                      shortServiceRefund: 123
+                      shortServiceRefundTaxPaid: 123
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: &ref_4
+                  code:
+                    description: The error code
+                    type: string
+                  message:
+                    description: The error message
+                    type: string
+                required: &ref_5
+                  - code
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: &ref_10
+                    code: FORMAT_NINO
+                    message: The NINO format is invalid
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied tax year field is not valid.
+                  value: &ref_11
+                    code: FORMAT_TAX_YEAR
+                    message: The taxYear format is invalid
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: &ref_12
+                    code: RULE_TAX_YEAR_NOT_SUPPORTED
+                    message: The tax year specified does not lie within the supported range
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: &ref_16
+                    code: RULE_TAX_YEAR_RANGE_INVALID
+                    message: A tax year range of one year is required
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: &ref_13
+                    code: RULE_INCORRECT_GOV_TEST_SCENARIO
+                    message: The supplied Gov-Test-Scenario is not valid
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: &ref_14
+                    code: CLIENT_OR_AGENT_NOT_AUTHORISED
+                    message: The client or agent is not authorised
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The matching resource is not found.
+                  value: &ref_18
+                    code: MATCHING_RESOURCE_NOT_FOUND
+                    message: Matching resource not found
+    put:
+      summary: Create and Amend Pension Charges
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      description: |
+        This endpoint enables you to create and amend charges relating to pensions. A National Insurance number and tax year must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                       |
+        |----------------------------------|------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates a success response.                                                                  |
+        | STATEFUL                         | Performs a stateful create or update.                                                          |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.|
+      tags:
+        - Pension Charges
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years. The minimum tax year is 2021-22. No gaps are allowed, for example, 2020-22 is not valid.
+          schema: *ref_7
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_8
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema: &ref_21
+            type: string
+            enum:
+              - application/json
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: &ref_15
+            type: string
+            example: Bearer bb7fed3fe10dd235a2ccda3d50fb
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $schema: http://json-schema.org/draft-04/schema#
+                  title: Tax years before 2024-25
+                  description: Create and Amend Pension Charges
+                  type: object
+                  properties:
+                    pensionSavingsTaxCharges:
+                      type: object
+                      description: |-
+                        Object holding the booleans for annual allowance.
+
+                        <b>NOTE:</b> Since April 2024, HMRC customers can no longer submit their pension lifetime allowance.
+
+                        The <code>lumpSumBenefitTakenInExcessOfLifetimeAllowance</code> and <code>benefitInExcessOfLifetimeAllowance</code> objects within <code>pensionSavingsTaxCharges</code> are now obsolete and will be removed in a future update. <b>Do not submit values for these objects</b>.
+                      properties:
+                        pensionSchemeTaxReference:
+                          type: array
+                          description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                          items:
+                            pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                            type: string
+                            example: 00123456RA
+                        lumpSumBenefitTakenInExcessOfLifetimeAllowance:
+                          type: object
+                          description: Object holding the amount and tax paid on lump sum benefit in excess of the lifetime allowance.
+                          properties:
+                            amount:
+                              description: The amount of the lump sum benefit taken in excess of the lifetime allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                            taxPaid:
+                              description: The amount of tax to be paid on the lump sum benefit taken in excess of the lifetime allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                          required:
+                            - amount
+                            - taxPaid
+                        benefitInExcessOfLifetimeAllowance:
+                          type: object
+                          description: The amount and tax paid on benefit in excess of the lifetime allowance.
+                          properties:
+                            amount:
+                              description: The amount of the benefit taken in excess of the lifetime allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                            taxPaid:
+                              description: The tax to be paid on the benefit taken in excess of the lifetime allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                          required:
+                            - amount
+                            - taxPaid
+                      required:
+                        - pensionSchemeTaxReference
+                    pensionSchemeOverseasTransfers:
+                      type: object
+                      description: Transfer of overseas pension to another pension scheme.
+                      properties:
+                        overseasSchemeProvider:
+                          description: Details of overseas pension provider.
+                          type: array
+                          items:
+                            oneOf:
+                              - title: qualifyingRecognisedOverseasPensionScheme
+                                type: object
+                                properties:
+                                  providerName:
+                                    description: The name of the pension provider.
+                                    type: string
+                                    example: Overseas Pensions Plc
+                                  providerAddress:
+                                    description: The address of the pension provider.
+                                    type: string
+                                    example: 111 Main Street, Any Town, Any City
+                                  providerCountryCode:
+                                    description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                    type: string
+                                    example: CYM
+                                  qualifyingRecognisedOverseasPensionScheme:
+                                    type: array
+                                    description: A list of one or more qualifying overseas pension scheme reference numbers for overseas pensions contributions.
+                                    items:
+                                      pattern: ^[Q]{1}[0-9]{6}$
+                                      type: string
+                                      example: Q123456
+                                required:
+                                  - providerName
+                                  - providerAddress
+                                  - providerCountryCode
+                              - title: pensionSchemeTaxReference
+                                type: object
+                                properties:
+                                  providerName:
+                                    description: The name of the pension provider.
+                                    type: string
+                                    example: Overseas Pensions Plc
+                                  providerAddress:
+                                    description: The address of the pension provider.
+                                    type: string
+                                    example: 111 Main Street, Any Town, Any City
+                                  providerCountryCode:
+                                    description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                    type: string
+                                    example: CYM
+                                  pensionSchemeTaxReference:
+                                    type: array
+                                    description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                                    items:
+                                      pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                                      type: string
+                                      example: 00123456RA
+                                required:
+                                  - providerName
+                                  - providerAddress
+                                  - providerCountryCode
+                        transferCharge:
+                          description: The amount the pension provider charges to transfer the pension. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                        transferChargeTaxPaid:
+                          description: The amount of tax paid on the transfer charge. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                      required:
+                        - overseasSchemeProvider
+                        - transferCharge
+                        - transferChargeTaxPaid
+                    pensionSchemeUnauthorisedPayments:
+                      type: object
+                      description: Tax on unauthorised payment.
+                      properties:
+                        pensionSchemeTaxReference:
+                          type: array
+                          description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                          items:
+                            pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                            type: string
+                            example: 00123456RA
+                        surcharge:
+                          type: object
+                          description: Object holding the unauthorised payments surcharge.
+                          properties:
+                            amount:
+                              description: The amount of the unauthorised payment. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                            foreignTaxPaid:
+                              description: The amount of foreign tax paid in pounds sterling. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                          required:
+                            - amount
+                            - foreignTaxPaid
+                        noSurcharge:
+                          type: object
+                          description: Object holding the unauthorised payments no surcharge.
+                          properties:
+                            amount:
+                              description: The amount of the unauthorised payment. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                            foreignTaxPaid:
+                              description: The amount of foreign tax paid in pounds sterling. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                          required:
+                            - amount
+                            - foreignTaxPaid
+                      required:
+                        - pensionSchemeTaxReference
+                    pensionContributions:
+                      type: object
+                      description: ' Payments paid into a pension.'
+                      properties:
+                        pensionSchemeTaxReference:
+                          type: array
+                          description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                          items:
+                            pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                            type: string
+                            example: 00123456RA
+                        inExcessOfTheAnnualAllowance:
+                          description: The amount of the in excess of the annual allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                        annualAllowanceTaxPaid:
+                          description: The amount of tax paid on annual allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                        isAnnualAllowanceReduced:
+                          description: A boolean indicating whether annual allowance has been reduced. If this field is set to true then at least one of taperedAnnualAllowance or moneyPurchasedAllowance must also be set to true.
+                          type: boolean
+                          example: 'false'
+                        taperedAnnualAllowance:
+                          description: A boolean indicating whether tapered annual allowance is lower than the standard annual allowance. The value must be true or false.
+                          type: boolean
+                          example: 'true'
+                        moneyPurchasedAllowance:
+                          description: 'A boolean indicating whether the person has paid the maximum amount allowed for their reduced allowance, based on Money Purchase Annual Allowance (MPAA). The value must be true or false. For example: false'
+                          type: boolean
+                          example: 'false'
+                      required:
+                        - pensionSchemeTaxReference
+                        - inExcessOfTheAnnualAllowance
+                        - annualAllowanceTaxPaid
+                        - isAnnualAllowanceReduced
+                    overseasPensionContributions:
+                      type: object
+                      description: Object holding contributions paid into overseas pension.
+                      properties:
+                        overseasSchemeProvider:
+                          description: Details of overseas pension provider.
+                          type: array
+                          items:
+                            oneOf:
+                              - title: qualifyingRecognisedOverseasPensionScheme
+                                type: object
+                                properties:
+                                  providerName:
+                                    description: The name of the pension provider.
+                                    type: string
+                                    example: Overseas Pensions Plc
+                                  providerAddress:
+                                    description: The address of the pension provider.
+                                    type: string
+                                    example: 111 Main Street, Any Town, Any City
+                                  providerCountryCode:
+                                    description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                    type: string
+                                    example: CYM
+                                  qualifyingRecognisedOverseasPensionScheme:
+                                    type: array
+                                    description: A list of one or more qualifying overseas pension scheme reference numbers for overseas pensions contributions.
+                                    items:
+                                      pattern: ^[Q]{1}[0-9]{6}$
+                                      type: string
+                                      example: Q123456
+                                required:
+                                  - providerName
+                                  - providerAddress
+                                  - providerCountryCode
+                              - title: pensionSchemeTaxReference
+                                type: object
+                                properties:
+                                  providerName:
+                                    description: The name of the pension provider.
+                                    type: string
+                                    example: Overseas Pensions Plc
+                                  providerAddress:
+                                    description: The address of the pension provider.
+                                    type: string
+                                    example: 111 Main Street, Any Town, Any City
+                                  providerCountryCode:
+                                    description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                    type: string
+                                    example: CYM
+                                  pensionSchemeTaxReference:
+                                    type: array
+                                    description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                                    items:
+                                      pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                                      type: string
+                                      example: 00123456RA
+                                required:
+                                  - providerName
+                                  - providerAddress
+                                  - providerCountryCode
+                        shortServiceRefund:
+                          description: The amount of short service refund for overseas pension contributions. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                        shortServiceRefundTaxPaid:
+                          description: The amount of tax paid on short service refund. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                      required:
+                        - overseasSchemeProvider
+                        - shortServiceRefund
+                        - shortServiceRefundTaxPaid
+                  additionalProperties: false
+                - $schema: http://json-schema.org/draft-04/schema#
+                  title: Tax years 2024-25 onwards
+                  description: Create and Amend Pension Charges
+                  type: object
+                  properties:
+                    pensionSchemeOverseasTransfers:
+                      type: object
+                      description: Transfer of overseas pension to another pension scheme.
+                      properties:
+                        overseasSchemeProvider:
+                          description: Details of overseas pension provider.
+                          type: array
+                          items:
+                            oneOf:
+                              - title: qualifyingRecognisedOverseasPensionScheme
+                                type: object
+                                properties:
+                                  providerName:
+                                    description: The name of the pension provider.
+                                    type: string
+                                    example: Overseas Pensions Plc
+                                  providerAddress:
+                                    description: The address of the pension provider.
+                                    type: string
+                                    example: 111 Main Street, Any Town, Any City
+                                  providerCountryCode:
+                                    description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                    type: string
+                                    example: CYM
+                                  qualifyingRecognisedOverseasPensionScheme:
+                                    type: array
+                                    description: A list of one or more qualifying overseas pension scheme reference numbers for overseas pensions contributions.
+                                    items:
+                                      pattern: ^[Q]{1}[0-9]{6}$
+                                      type: string
+                                      example: Q123456
+                                required:
+                                  - providerName
+                                  - providerAddress
+                                  - providerCountryCode
+                              - title: pensionSchemeTaxReference
+                                type: object
+                                properties:
+                                  providerName:
+                                    description: The name of the pension provider.
+                                    type: string
+                                    example: Overseas Pensions Plc
+                                  providerAddress:
+                                    description: The address of the pension provider.
+                                    type: string
+                                    example: 111 Main Street, Any Town, Any City
+                                  providerCountryCode:
+                                    description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                    type: string
+                                    example: CYM
+                                  pensionSchemeTaxReference:
+                                    type: array
+                                    description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                                    items:
+                                      pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                                      type: string
+                                      example: 00123456RA
+                                required:
+                                  - providerName
+                                  - providerAddress
+                                  - providerCountryCode
+                        transferCharge:
+                          description: The amount the pension provider charges to transfer the pension. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                        transferChargeTaxPaid:
+                          description: The amount of tax paid on the transfer charge. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                      required:
+                        - overseasSchemeProvider
+                        - transferCharge
+                        - transferChargeTaxPaid
+                    pensionSchemeUnauthorisedPayments:
+                      type: object
+                      description: Tax on unauthorised payment.
+                      properties:
+                        pensionSchemeTaxReference:
+                          type: array
+                          description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                          items:
+                            pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                            type: string
+                            example: 00123456RA
+                        surcharge:
+                          type: object
+                          description: Object holding the unauthorised payments surcharge.
+                          properties:
+                            amount:
+                              description: The amount of the unauthorised payment. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                            foreignTaxPaid:
+                              description: The amount of foreign tax paid in pounds sterling. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                          required:
+                            - amount
+                            - foreignTaxPaid
+                        noSurcharge:
+                          type: object
+                          description: Object holding the unauthorised payments no surcharge.
+                          properties:
+                            amount:
+                              description: The amount of the unauthorised payment. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                            foreignTaxPaid:
+                              description: The amount of foreign tax paid in pounds sterling. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                              type: number
+                              example: '1999.99'
+                          required:
+                            - amount
+                            - foreignTaxPaid
+                      required:
+                        - pensionSchemeTaxReference
+                    pensionContributions:
+                      type: object
+                      description: ' Payments paid into a pension.'
+                      properties:
+                        pensionSchemeTaxReference:
+                          type: array
+                          description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                          items:
+                            pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                            type: string
+                            example: 00123456RA
+                        inExcessOfTheAnnualAllowance:
+                          description: The amount of the in excess of the annual allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                        annualAllowanceTaxPaid:
+                          description: The amount of tax paid on annual allowance. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                        isAnnualAllowanceReduced:
+                          description: A boolean indicating whether annual allowance has been reduced. If this field is set to true then at least one of taperedAnnualAllowance or moneyPurchasedAllowance must also be set to true.
+                          type: boolean
+                          example: 'false'
+                        taperedAnnualAllowance:
+                          description: A boolean indicating whether tapered annual allowance is lower than the standard annual allowance. The value must be true or false.
+                          type: boolean
+                          example: 'true'
+                        moneyPurchasedAllowance:
+                          description: 'A boolean indicating whether the person has paid the maximum amount allowed for their reduced allowance, based on Money Purchase Annual Allowance (MPAA). The value must be true or false. For example: false'
+                          type: boolean
+                          example: 'false'
+                      required:
+                        - pensionSchemeTaxReference
+                        - inExcessOfTheAnnualAllowance
+                        - annualAllowanceTaxPaid
+                        - isAnnualAllowanceReduced
+                    overseasPensionContributions:
+                      type: object
+                      description: Object holding contributions paid into overseas pension.
+                      properties:
+                        overseasSchemeProvider:
+                          description: Details of overseas pension provider.
+                          type: array
+                          items:
+                            oneOf:
+                              - title: qualifyingRecognisedOverseasPensionScheme
+                                type: object
+                                properties:
+                                  providerName:
+                                    description: The name of the pension provider.
+                                    type: string
+                                    example: Overseas Pensions Plc
+                                  providerAddress:
+                                    description: The address of the pension provider.
+                                    type: string
+                                    example: 111 Main Street, Any Town, Any City
+                                  providerCountryCode:
+                                    description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                    type: string
+                                    example: CYM
+                                  qualifyingRecognisedOverseasPensionScheme:
+                                    type: array
+                                    description: A list of one or more qualifying overseas pension scheme reference numbers for overseas pensions contributions.
+                                    items:
+                                      pattern: ^[Q]{1}[0-9]{6}$
+                                      type: string
+                                      example: Q123456
+                                required:
+                                  - providerName
+                                  - providerAddress
+                                  - providerCountryCode
+                              - title: pensionSchemeTaxReference
+                                type: object
+                                properties:
+                                  providerName:
+                                    description: The name of the pension provider.
+                                    type: string
+                                    example: Overseas Pensions Plc
+                                  providerAddress:
+                                    description: The address of the pension provider.
+                                    type: string
+                                    example: 111 Main Street, Any Town, Any City
+                                  providerCountryCode:
+                                    description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
+                                    type: string
+                                    example: CYM
+                                  pensionSchemeTaxReference:
+                                    type: array
+                                    description: A list of one or more unique references provided by HM Revenue and Customs (HMRC) when the scheme has been registered for tax relief and exemptions. It is 10 characters made up of 8 numbers followed by 2 letters.
+                                    items:
+                                      pattern: ^\d{8}[R]{1}[a-zA-Z]{1}$
+                                      type: string
+                                      example: 00123456RA
+                                required:
+                                  - providerName
+                                  - providerAddress
+                                  - providerCountryCode
+                        shortServiceRefund:
+                          description: The amount of short service refund for overseas pension contributions. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                        shortServiceRefundTaxPaid:
+                          description: The amount of tax paid on short service refund. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                          type: number
+                          example: '1999.99'
+                      required:
+                        - overseasSchemeProvider
+                        - shortServiceRefund
+                        - shortServiceRefundTaxPaid
+                  additionalProperties: false
+            examples:
+              For tax years before 2024-25:
+                description: Full Expenses request
+                value:
+                  pensionSavingsTaxCharges:
+                    pensionSchemeTaxReference:
+                      - 00123456RA
+                      - 00123456RB
+                    lumpSumBenefitTakenInExcessOfLifetimeAllowance:
+                      amount: 100
+                      taxPaid: 100
+                    benefitInExcessOfLifetimeAllowance:
+                      amount: 100
+                      taxPaid: 100
+                  pensionSchemeOverseasTransfers:
+                    overseasSchemeProvider:
+                      - providerName: Overseas Pensions Plc
+                        providerAddress: 111 Main Street, George Town, Grand Cayman
+                        providerCountryCode: CYM
+                        qualifyingRecognisedOverseasPensionScheme:
+                          - Q123456
+                    transferCharge: 100
+                    transferChargeTaxPaid: 100
+                  pensionSchemeUnauthorisedPayments:
+                    pensionSchemeTaxReference:
+                      - 00123456RA
+                      - 00123456RB
+                    surcharge:
+                      amount: 100
+                      foreignTaxPaid: 100
+                    noSurcharge:
+                      amount: 100
+                      foreignTaxPaid: 100
+                  pensionContributions:
+                    pensionSchemeTaxReference:
+                      - 00123456RA
+                      - 00123456RB
+                    inExcessOfTheAnnualAllowance: 100
+                    annualAllowanceTaxPaid: 100
+                    isAnnualAllowanceReduced: true
+                    taperedAnnualAllowance: true
+                    moneyPurchasedAllowance: false
+                  overseasPensionContributions:
+                    overseasSchemeProvider:
+                      - providerName: Overseas Pensions Plc
+                        providerAddress: 111 Main Street, George Town, Grand Cayman
+                        providerCountryCode: CYM
+                        qualifyingRecognisedOverseasPensionScheme:
+                          - Q123456
+                    shortServiceRefund: 123
+                    shortServiceRefundTaxPaid: 123
+              For tax years 2024-25 onwards:
+                description: Full Expenses request
+                value:
+                  pensionSchemeOverseasTransfers:
+                    overseasSchemeProvider:
+                      - providerName: Overseas Pensions Plc
+                        providerAddress: 111 Main Street, George Town, Grand Cayman
+                        providerCountryCode: CYM
+                        qualifyingRecognisedOverseasPensionScheme:
+                          - Q123456
+                    transferCharge: 100
+                    transferChargeTaxPaid: 100
+                  pensionSchemeUnauthorisedPayments:
+                    pensionSchemeTaxReference:
+                      - 00123456RA
+                      - 00123456RB
+                    surcharge:
+                      amount: 100
+                      foreignTaxPaid: 100
+                    noSurcharge:
+                      amount: 100
+                      foreignTaxPaid: 100
+                  pensionContributions:
+                    pensionSchemeTaxReference:
+                      - 00123456RA
+                      - 00123456RB
+                    inExcessOfTheAnnualAllowance: 100
+                    annualAllowanceTaxPaid: 100
+                    isAnnualAllowanceReduced: true
+                    taperedAnnualAllowance: true
+                    moneyPurchasedAllowance: false
+                  overseasPensionContributions:
+                    overseasSchemeProvider:
+                      - providerName: Overseas Pensions Plc
+                        providerAddress: 111 Main Street, George Town, Grand Cayman
+                        providerCountryCode: CYM
+                        qualifyingRecognisedOverseasPensionScheme:
+                          - Q123456
+                    shortServiceRefund: 123
+                    shortServiceRefundTaxPaid: 123
+      responses:
+        '204':
+          description: No Content
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied tax year field is not valid.
+                  value: *ref_11
+                FORMAT_VALUE:
+                  description: |
+                    One or more values have been added with the incorrect format.
+                  value: &ref_22
+                    code: FORMAT_VALUE
+                    message: The value must be between 0 and 99999999999.99
+                FORMAT_COUNTRY_CODE:
+                  description: |
+                    The format of the supplied country code is not valid.
+                  value:
+                    code: FORMAT_COUNTRY_CODE
+                    message: The provided Country code is invalid
+                RULE_COUNTRY_CODE:
+                  description: |
+                    Not a valid ISO 3166-1 alpha-3 country code.
+                  value:
+                    code: RULE_COUNTRY_CODE
+                    message: The country code is not a valid ISO 3166-1 alpha-3 country code
+                FORMAT_PROVIDER_NAME:
+                  description: |
+                    The format of providerName is invalid. providerName must be between 1-105 characters.
+                  value:
+                    code: FORMAT_PROVIDER_NAME
+                    message: The provided name is invalid
+                FORMAT_PROVIDERS_ADDRESS:
+                  description: |
+                    The format of providerAddress is invalid. providerAddress must be between 1-250 characters.
+                  value:
+                    code: FORMAT_PROVIDERS_ADDRESS
+                    message: The provided address is invalid
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value: &ref_23
+                    code: RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED
+                    message: An empty or non-matching body was submitted
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_12
+                FORMAT_QOPS_REF:
+                  description: |
+                    The format of QOPS reference number is not valid.
+                  value:
+                    code: FORMAT_QOPS_REF
+                    message: The provided QOPS reference number is invalid
+                FORMAT_PENSION_SCHEME_TAX_REFERENCE:
+                  description: |
+                    The format of pension scheme tax reference is not valid.
+                  value:
+                    code: FORMAT_PENSION_SCHEME_TAX_REFERENCE
+                    message: The provided pension scheme tax reference is invalid
+                RULE_IS_ANNUAL_ALLOWANCE_REDUCED:
+                  description: |
+                    If isAnnualAllowanceReduced is true then at least one of taperedAnnualAllowance or moneyPurchasedAllowance must also be true.
+                  value:
+                    code: RULE_IS_ANNUAL_ALLOWANCE_REDUCED
+                    message: Tapered annual allowance or money purchased allowance has not been provided
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_13
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: The request cannot be completed as you are outside the amendment window.
+                  value: &ref_17
+                    code: RULE_OUTSIDE_AMENDMENT_WINDOW
+                    message: You are outside the amendment window
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_14
+    delete:
+      summary: Delete Pension Charges
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      description: |
+        This endpoint enables you to delete charges relating to pensions. A National Insurance number and tax year must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.  
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                                     |
+        |----------------------------------|--------------------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates a success response.                                                                                |
+        | NOT_FOUND                        | Simulates a scenario where the remote endpoint has indicated that no data can be found for the given period. |
+        | STATEFUL                         | Performs a stateful delete.                                                                                  |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.              |
+      tags:
+        - Pension Charges
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year the data applies to, for example, 2021-22. The start year and end year must not span two tax years. The minimum tax year is 2021-22. No gaps are allowed, for example, 2020-22 is not valid.
+          schema: *ref_7
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_8
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_15
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+      responses:
+        '204':
+          description: No Content
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied tax year field is not valid.
+                  value: *ref_11
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_12
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_16
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_13
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: The request cannot be completed as you are outside the amendment window.
+                  value: *ref_17
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_14
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The matching resource is not found.
+                  value: *ref_18
+  /individuals/charges/high-income-child-benefit/{nino}/{taxYear}:
+    get:
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      summary: Retrieve High Income Child Benefit Charge Submission
+      description: |
+        This endpoint allows a customer to retrieve the information used to calculate a charge from High Income Child Benefit earners.
+        A National Insurance number and tax year must be provided.
+
+        ###  Test data
+          Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+          | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                      |
+          |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+          | N/A - DEFAULT                    | Simulates success response.                                                                                                   |
+          | NOT_FOUND                        | Simulates the scenario where no data is found.                                                                                |
+          | TAX_YEAR_NOT_SUPPORTED           | Simulates the scenario where the tax year is not supported.                                                                   |
+          | REQUEST_CANNOT_BE_FULFILLED      | Simulates the scenario where the request cannot be fulfilled for various reasons other than the ones triggering other errors. |
+          | STATEFUL                         | Performs a stateful retrieve.                                                                                                 |
+      tags:
+        - High Income Child Benefit Charge Submission
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2025-26. No gaps are allowed, for example, 2025-27 is not valid.
+          schema: &ref_20
+            type: string
+            example: 2025-26
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_8
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: *ref_19
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: Retrieve High Income Child Benefit Charge Submission
+                description: Retrieve High Income Child Benefit Charge Submission
+                type: object
+                properties:
+                  submittedOn:
+                    type: string
+                    description: The date and time of the submission. Must conform to the format YYYY-MM-DDThh:mm:ss.SSSZ
+                    format: YYYY-MM-DDThh:mm:ss.SSSZ
+                    example: '2025-05-09T12:20:19.978Z'
+                  amountOfChildBenefitReceived:
+                    type: number
+                    description: Total amount of child benefit received. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                    example: 1111.22
+                    multipleOf: 0.01
+                    minimum: 0
+                    maximum: 99999999999.99
+                  numberOfChildren:
+                    type: integer
+                    description: Number of children for which you received child benefit. The value must be an integer between 1 and 99.
+                    example: 2
+                    minimum: 1
+                    maximum: 99
+                  dateCeased:
+                    type: string
+                    description: Date child benefit ended. Must conform to the format YYYY-MM-DD
+                    format: YYYY-MM-DD
+                    example: '2025-05-08'
+                additionalProperties: false
+                required:
+                  - submittedOn
+                  - amountOfChildBenefitReceived
+                  - numberOfChildren
+              example:
+                submittedOn: '2025-05-09T12:20:19.978Z'
+                amountOfChildBenefitReceived: 1111.22
+                numberOfChildren: 2
+                dateCeased: '2025-05-08'
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied tax year field is not valid.
+                  value: *ref_11
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_16
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_12
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_13
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_14
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The matching resource is not found.
+                  value: *ref_18
+        '422':
+          description: Unprocessable Entity
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                RULE_REQUEST_CANNOT_BE_FULFILLED:
+                  description: The request cannot be fulfilled. More specific information is provided in the error message.
+                  value: &ref_24
+                    code: RULE_REQUEST_CANNOT_BE_FULFILLED
+                    message: Custom (will vary in production depending on the actual error)
+    put:
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      summary: Create or Amend High Income Child Benefit Charge Submission
+      description: |
+        This endpoint provides the ability to create or update the relevant information used to calculate a charge from High Income Child Benefit earners.
+        A National Insurance number and tax year must be provided.
+
+        ###  Test data
+          Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+          | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                      |
+          |----------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+          | N/A - DEFAULT                    | Simulates success response.                                                                                                   |
+          | TAX_YEAR_NOT_SUPPORTED           | Simulates the scenario where the tax year is not supported.                                                                   |
+          | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.                               |
+          | REQUEST_CANNOT_BE_FULFILLED      | Simulates the scenario where the request cannot be fulfilled for various reasons other than the ones triggering other errors. |
+          | STATEFUL                         | Performs a stateful create or update.                                                                                         |
+      tags:
+        - High Income Child Benefit Charge Submission
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2025-26. No gaps are allowed, for example, 2025-27 is not valid.
+          schema: *ref_20
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_8
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema: *ref_21
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_15
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              title: Create or Amend High Income Child Benefit Charge Submission
+              description: Create or Amend High Income Child Benefit Charge Submission
+              type: object
+              properties:
+                amountOfChildBenefitReceived:
+                  type: number
+                  description: Total amount of child benefit received. The value must be between 0 and 99999999999.99 up to 2 decimal places.
+                  example: 1111.22
+                  multipleOf: 0.01
+                  minimum: 0
+                  maximum: 99999999999.99
+                numberOfChildren:
+                  type: integer
+                  description: Number of children for which you received child benefit. The value must be an integer between 1 and 99.
+                  example: 2
+                  minimum: 1
+                  maximum: 99
+                dateCeased:
+                  type: string
+                  description: Date child benefit ended. Must conform to the format YYYY-MM-DD
+                  format: YYYY-MM-DD
+                  example: '2025-05-08'
+              additionalProperties: false
+              required:
+                - amountOfChildBenefitReceived
+                - numberOfChildren
+            examples:
+              full_amendment:
+                description: Full High Income Child Benefit Charge Submission Amendment
+                value:
+                  amountOfChildBenefitReceived: 1111.22
+                  numberOfChildren: 2
+                  dateCeased: '2025-05-08'
+              minimal_amendment:
+                description: Minimal High Income Child Benefit Charge Submission Amendment
+                value:
+                  amountOfChildBenefitReceived: 1111.22
+                  numberOfChildren: 2
+      responses:
+        '204':
+          description: No Content
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied tax year field is not valid.
+                  value: *ref_11
+                FORMAT_VALUE:
+                  description: |
+                    One or more values have been added with the incorrect format.
+                  value: *ref_22
+                FORMAT_DATE_CEASED:
+                  description: |
+                    The format of the supplied ceased date field is not valid.
+                  value:
+                    code: FORMAT_DATE_CEASED
+                    message: The ceased date format is invalid
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_16
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_12
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value: *ref_23
+                RULE_DATE_CEASED:
+                  description: |
+                    The ceased date must be within the tax year.
+                  value:
+                    code: RULE_DATE_CEASED
+                    message: The ceased date must be within the tax year
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_13
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: The request cannot be completed as you are outside the amendment window.
+                  value: *ref_17
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_14
+        '422':
+          description: Unprocessable Entity
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                RULE_REQUEST_CANNOT_BE_FULFILLED:
+                  description: The request cannot be fulfilled. More specific information is provided in the error message.
+                  value: *ref_24
+    delete:
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      summary: Delete High Income Child Benefit Charge Submission
+      description: |
+        This endpoint allows a customer to delete the information used to calculate a charge from High Income Child Benefit earners. A National Insurance number and tax year must be provided.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.  
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                     |
+        |----------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates a success response.                                                                                                |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                                                               |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.                              |
+        | TAX_YEAR_NOT_SUPPORTED           | Simulates the scenario where the tax year is not supported.                                                                  |
+        | REQUEST_CANNOT_BE_FULFILLED      | Simulates the scenario where the request cannot be fulfilled for various reasons other than the ones triggering other errors.|
+        | STATEFUL                         | Performs a stateful delete.                                                                                                  |
+      tags:
+        - High Income Child Benefit Charge Submission
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2025-26. No gaps are allowed, for example, 2025-27 is not valid.
+          schema: *ref_20
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_8
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_15
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+      responses:
+        '204':
+          description: No Content
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied tax year field is not valid.
+                  value: *ref_11
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_12
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_16
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_13
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: The request cannot be completed as you are outside the amendment window.
+                  value: *ref_17
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_14
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The matching resource is not found.
+                  value: *ref_18
+        '422':
+          description: Unprocessable Entity
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                RULE_REQUEST_CANNOT_BE_FULFILLED:
+                  description: The request cannot be fulfilled. More specific information is provided in the error message.
+                  value: *ref_24
+components:
+  securitySchemes:
+    User-Restricted:
+      type: oauth2
+      description: HMRC supports OAuth 2.0 for authenticating [User-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints) API requests
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.service.hmrc.gov.uk/oauth/authorize
+          tokenUrl: https://api.service.hmrc.gov.uk/oauth/token
+          refreshUrl: https://api.service.hmrc.gov.uk/oauth/refresh
+          scopes:
+            write:self-assessment: Grant write access
+            read:self-assessment: Grant read access
