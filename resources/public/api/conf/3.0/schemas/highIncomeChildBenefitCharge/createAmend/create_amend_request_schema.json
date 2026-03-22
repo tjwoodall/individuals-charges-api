@@ -22,8 +22,9 @@
     "dateCeased": {
       "type": "string",
       "description": "Date child benefit ended. Must conform to the format YYYY-MM-DD",
-      "format": "YYYY-MM-DD",
-      "example": "2025-05-08"
+      "format": "date",
+      "example": "2025-05-08",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
     }
   },
   "additionalProperties": false,
