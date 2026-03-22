@@ -7,8 +7,9 @@
     "submittedOn": {
       "type": "string",
       "description": "The date and time of the submission. Must conform to the format YYYY-MM-DDThh:mm:ss.SSSZ",
-      "format": "YYYY-MM-DDThh:mm:ss.SSSZ",
-      "example": "2025-05-09T12:20:19.978Z"
+      "format": "date-time",
+      "example": "2025-05-09T12:20:19.978Z",
+      "pattern": "^2[0-9]{3}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{0,3}Z$"
     },
     "amountOfChildBenefitReceived": {
       "type": "number",
@@ -28,8 +29,9 @@
     "dateCeased": {
       "type": "string",
       "description": "Date child benefit ended. Must conform to the format YYYY-MM-DD",
-      "format": "YYYY-MM-DD",
-      "example": "2025-05-08"
+      "format": "date",
+      "example": "2025-05-08",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
     }
   },
   "additionalProperties": false,
