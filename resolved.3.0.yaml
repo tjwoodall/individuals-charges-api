@@ -40,17 +40,14 @@ tags:
 paths:
   /individuals/charges/pensions/{nino}/{taxYear}:
     get:
-      summary: Retrieve Pension Charges
       security:
       - User-Restricted:
         - read:self-assessment
     put:
-      summary: Create and Amend Pension Charges
       security:
       - User-Restricted:
         - write:self-assessment
     delete:
-      summary: Delete Pension Charges
       security:
       - User-Restricted:
         - write:self-assessment
