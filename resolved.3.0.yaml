@@ -3,7 +3,7 @@ info:
   title: Individuals Charges (MTD)
   description: "The following groups of endpoints are stateful in the Sandbox:\n*\
     \ [Pension Charges](#tag/Pension-Charges)\n* [High Income Child Benefit Charge\
-    \ Submission](#tag/High-Income-Child-Benefit-Charge-Submission)\n\n# Send fraud\
+    \ Submission](#tag/High-Income-Child-Benefit-Charge-Submission)\n\n\n# Send fraud\
     \ prevention data\nHMRC monitors transactions to help protect your customers'\
     \ confidential data from criminals and fraudsters. \n\n<div class=\"govuk-warning-text\
     \ warning-icon-fix\">\n  <span class=\"govuk-warning-text__icon warning-icon-ui-fix\"\
