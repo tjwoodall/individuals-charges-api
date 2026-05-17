@@ -7,6 +7,7 @@ info:
     * [Pension Charges](#tag/Pension-Charges)
     * [High Income Child Benefit Charge Submission](#tag/High-Income-Child-Benefit-Charge-Submission)
 
+
     # Send fraud prevention data
     HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
 
@@ -101,7 +102,6 @@ paths:
             Only in sandbox environment. See Test Data table for all header values.
           schema: &ref_9
             type: string
-            example: '-'
           required: false
       responses:
         '200':
@@ -225,12 +225,14 @@ paths:
                               type: object
                               properties:
                                 providerName:
-                                  description: The name of the pension provider
+                                  description: The name of the pension provider. Must not be empty or contain only whitespace.
                                   type: string
+                                  pattern: ^.{1,105}$
                                   example: Overseas Pensions Plc
                                 providerAddress:
-                                  description: The address of the pension provider.
+                                  description: The address of the pension provider. Must not be empty or contain only whitespace.
                                   type: string
+                                  pattern: ^.{1,250}$
                                   example: 111 Main Street, Any Town, Any City
                                 providerCountryCode:
                                   description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -378,12 +380,14 @@ paths:
                               type: object
                               properties:
                                 providerName:
-                                  description: The name of the pension provider
+                                  description: The name of the pension provider. Must not be empty or contain only whitespace.
                                   type: string
+                                  pattern: ^.{1,105}$
                                   example: Overseas Pensions Plc
                                 providerAddress:
-                                  description: The address of the pension provider.
+                                  description: The address of the pension provider. Must not be empty or contain only whitespace.
                                   type: string
+                                  pattern: ^.{1,250}$
                                   example: 111 Main Street, Any Town, Any City
                                 providerCountryCode:
                                   description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -450,12 +454,14 @@ paths:
                               type: object
                               properties:
                                 providerName:
-                                  description: The name of the pension provider
+                                  description: The name of the pension provider. Must not be empty or contain only whitespace.
                                   type: string
+                                  pattern: ^.{1,105}$
                                   example: Overseas Pensions Plc
                                 providerAddress:
-                                  description: The address of the pension provider.
+                                  description: The address of the pension provider. Must not be empty or contain only whitespace.
                                   type: string
+                                  pattern: ^.{1,250}$
                                   example: 111 Main Street, Any Town, Any City
                                 providerCountryCode:
                                   description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -603,12 +609,14 @@ paths:
                               type: object
                               properties:
                                 providerName:
-                                  description: The name of the pension provider
+                                  description: The name of the pension provider. Must not be empty or contain only whitespace.
                                   type: string
+                                  pattern: ^.{1,105}$
                                   example: Overseas Pensions Plc
                                 providerAddress:
-                                  description: The address of the pension provider.
+                                  description: The address of the pension provider. Must not be empty or contain only whitespace.
                                   type: string
+                                  pattern: ^.{1,250}$
                                   example: 111 Main Street, Any Town, Any City
                                 providerCountryCode:
                                   description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -972,12 +980,14 @@ paths:
                                 type: object
                                 properties:
                                   providerName:
-                                    description: The name of the pension provider.
+                                    description: The name of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,105}$
                                     example: Overseas Pensions Plc
                                   providerAddress:
-                                    description: The address of the pension provider.
+                                    description: The address of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,250}$
                                     example: 111 Main Street, Any Town, Any City
                                   providerCountryCode:
                                     description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -998,12 +1008,14 @@ paths:
                                 type: object
                                 properties:
                                   providerName:
-                                    description: The name of the pension provider.
+                                    description: The name of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,105}$
                                     example: Overseas Pensions Plc
                                   providerAddress:
-                                    description: The address of the pension provider.
+                                    description: The address of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,250}$
                                     example: 111 Main Street, Any Town, Any City
                                   providerCountryCode:
                                     description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -1148,12 +1160,14 @@ paths:
                                 type: object
                                 properties:
                                   providerName:
-                                    description: The name of the pension provider.
+                                    description: The name of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,105}$
                                     example: Overseas Pensions Plc
                                   providerAddress:
-                                    description: The address of the pension provider.
+                                    description: The address of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,250}$
                                     example: 111 Main Street, Any Town, Any City
                                   providerCountryCode:
                                     description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -1174,12 +1188,14 @@ paths:
                                 type: object
                                 properties:
                                   providerName:
-                                    description: The name of the pension provider.
+                                    description: The name of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,105}$
                                     example: Overseas Pensions Plc
                                   providerAddress:
-                                    description: The address of the pension provider.
+                                    description: The address of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,250}$
                                     example: 111 Main Street, Any Town, Any City
                                   providerCountryCode:
                                     description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -1233,12 +1249,14 @@ paths:
                                 type: object
                                 properties:
                                   providerName:
-                                    description: The name of the pension provider.
+                                    description: The name of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,105}$
                                     example: Overseas Pensions Plc
                                   providerAddress:
-                                    description: The address of the pension provider.
+                                    description: The address of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,250}$
                                     example: 111 Main Street, Any Town, Any City
                                   providerCountryCode:
                                     description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -1259,12 +1277,14 @@ paths:
                                 type: object
                                 properties:
                                   providerName:
-                                    description: The name of the pension provider.
+                                    description: The name of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,105}$
                                     example: Overseas Pensions Plc
                                   providerAddress:
-                                    description: The address of the pension provider.
+                                    description: The address of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,250}$
                                     example: 111 Main Street, Any Town, Any City
                                   providerCountryCode:
                                     description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -1409,12 +1429,14 @@ paths:
                                 type: object
                                 properties:
                                   providerName:
-                                    description: The name of the pension provider.
+                                    description: The name of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,105}$
                                     example: Overseas Pensions Plc
                                   providerAddress:
-                                    description: The address of the pension provider.
+                                    description: The address of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,250}$
                                     example: 111 Main Street, Any Town, Any City
                                   providerCountryCode:
                                     description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
@@ -1435,12 +1457,14 @@ paths:
                                 type: object
                                 properties:
                                   providerName:
-                                    description: The name of the pension provider.
+                                    description: The name of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,105}$
                                     example: Overseas Pensions Plc
                                   providerAddress:
-                                    description: The address of the pension provider.
+                                    description: The address of the pension provider. Must not be empty or contain only whitespace.
                                     type: string
+                                    pattern: ^.{1,250}$
                                     example: 111 Main Street, Any Town, Any City
                                   providerCountryCode:
                                     description: A three-letter code that represents a country name. The value must be a ISO 3166-1 alpha-3 code.
