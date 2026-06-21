@@ -3,19 +3,20 @@ info:
   title: Individuals Charges (MTD)
   description: "The following groups of endpoints are stateful in the Sandbox:\n*\
     \ [Pension Charges](#tag/Pension-Charges)\n* [High Income Child Benefit Charge\
-    \ Submission](#tag/High-Income-Child-Benefit-Charge-Submission)\n\n\n# Send fraud\
-    \ prevention data\nHMRC monitors transactions to help protect your customers'\
-    \ confidential data from criminals and fraudsters. \n\n<div class=\"govuk-warning-text\
-    \ warning-icon-fix\">\n  <span class=\"govuk-warning-text__icon warning-icon-ui-fix\"\
-    \ aria-hidden=\"true\">!</span>\n  <strong class=\"govuk-warning-text__text\"\
-    >\n    <span class=\"govuk-warning-text__assistive\">Warning</span>\n    You are\
-    \ required by law to submit header data for this API. This includes all associated\
-    \ APIs and endpoints.\n  </strong>\n</div>\n\n[Check the data you need to send](/guides/fraud-prevention/).\
-    \ You can also use the [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0)\
-    \ during initial development and as part of your quality assurance checks.\n\n\
-    # Mapping APIs to Self Assessment tax return forms\nSome parameters in this API\
-    \ map to box numbers in one or more Self Assessment tax return forms. To learn\
-    \ more and to download this mapping information as a CSV file, go to [income-tax-mtd-changelog/mapping](https://github.com/hmrc/income-tax-mtd-changelog?tab=readme-ov-file#mapping-apis-to-self-assessment-tax-return-forms)\
+    \ Submission](#tag/High-Income-Child-Benefit-Charge-Submission)\n\n* [Winter Fuel\
+    \ Payment](#tag/Winter-Fuel-Payment)\n\n\n# Send fraud prevention data\nHMRC monitors\
+    \ transactions to help protect your customers' confidential data from criminals\
+    \ and fraudsters. \n\n<div class=\"govuk-warning-text warning-icon-fix\">\n  <span\
+    \ class=\"govuk-warning-text__icon warning-icon-ui-fix\" aria-hidden=\"true\"\
+    >!</span>\n  <strong class=\"govuk-warning-text__text\">\n    <span class=\"govuk-warning-text__assistive\"\
+    >Warning</span>\n    You are required by law to submit header data for this API.\
+    \ This includes all associated APIs and endpoints.\n  </strong>\n</div>\n\n[Check\
+    \ the data you need to send](/guides/fraud-prevention/). You can also use the\
+    \ [Test API](/api-documentation/docs/api/service/txm-fph-validator-api/1.0) during\
+    \ initial development and as part of your quality assurance checks.\n\n# Mapping\
+    \ APIs to Self Assessment tax return forms\nSome parameters in this API map to\
+    \ box numbers in one or more Self Assessment tax return forms. To learn more and\
+    \ to download this mapping information as a CSV file, go to [income-tax-mtd-changelog/mapping](https://github.com/hmrc/income-tax-mtd-changelog?tab=readme-ov-file#mapping-apis-to-self-assessment-tax-return-forms)\
     \ on GitHub.\n\n# Changelog\nYou can find the changelog in the [income-tax-mtd-changelog](https://github.com/hmrc/income-tax-mtd-changelog/#readme)\
     \ on GitHub.\n\n# Support\n\n* Direct reports of bugs or errors in Production\
     \ or Sandbox code, or queries about HMRC business functionality (such as how a\
@@ -37,6 +38,8 @@ tags:
 - name: High Income Child Benefit Charge Submission
   description: Resources relating to an individual's high income child benefit charge
     submission.
+- name: Winter Fuel Payment
+  description: Resources relating to an individual's winter fuel payment.
 paths:
   /individuals/charges/pensions/{nino}/{taxYear}:
     get:
@@ -52,6 +55,19 @@ paths:
       - User-Restricted:
         - write:self-assessment
   /individuals/charges/high-income-child-benefit/{nino}/{taxYear}:
+    get:
+      security:
+      - User-Restricted:
+        - read:self-assessment
+    put:
+      security:
+      - User-Restricted:
+        - write:self-assessment
+    delete:
+      security:
+      - User-Restricted:
+        - write:self-assessment
+  /individuals/charges/winter-fuel-payment/{nino}/{taxYear}:
     get:
       security:
       - User-Restricted:
