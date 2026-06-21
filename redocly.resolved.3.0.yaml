@@ -7,6 +7,8 @@ info:
     * [Pension Charges](#tag/Pension-Charges)
     * [High Income Child Benefit Charge Submission](#tag/High-Income-Child-Benefit-Charge-Submission)
 
+    * [Winter Fuel Payment](#tag/Winter-Fuel-Payment)
+
 
     # Send fraud prevention data
     HMRC monitors transactions to help protect your customers' confidential data from criminals and fraudsters. 
@@ -42,6 +44,8 @@ tags:
     description: Resources relating to an individual's pension charges.
   - name: High Income Child Benefit Charge Submission
     description: Resources relating to an individual's high income child benefit charge submission.
+  - name: Winter Fuel Payment
+    description: Resources relating to an individual's winter fuel payment.
 paths:
   /individuals/charges/pensions/{nino}/{taxYear}:
     get:
@@ -2837,6 +2841,797 @@ paths:
                 RULE_REQUEST_CANNOT_BE_FULFILLED:
                   description: The request cannot be fulfilled. More specific information is provided in the error message.
                   value: *ref_24
+  /individuals/charges/winter-fuel-payment/{nino}/{taxYear}:
+    get:
+      security:
+        - User-Restricted:
+            - read:self-assessment
+      summary: Retrieve Winter Fuel Payment [test only]
+      description: |
+        This endpoint allows a developer to retrieve any customer submitted Winter Fuel Payment amount for a tax year.
+        A National Insurance number and tax year must be provided.
+        This endpoint can only be used for tax years from 2026–27 onwards.
+
+        ###  Test data
+          Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+        | Header Value (Gov-Test-Scenario)         | Scenario                                                                                                                                                                                                                                   |
+        |------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|                                                                                      
+        | N/A - DEFAULT                            | Simulates a successful response with latest values.                                                                                                                                                                                        |
+        | N/A - DEFAULT <br> **?source=latest**    | Simulates a successful response with latest values.                                                                                                                                                                                        |
+        | N/A - DEFAULT <br> **?source=hmrc-held** | Simulates a successful response with HMRC held values.                                                                                                                                                                                     |
+        | N/A - DEFAULT <br> **?source=user**      | Simulates a successful response with user submitted values.                                                                                                                                                                                |
+        | NOT_FOUND                                | Simulates the scenario where no data is found.                                                                                                                                                                                             |
+        | STATEFUL                                 | Performs a stateful retrieve. <p> Information and data held by HMRC is not available in the sandbox environment. Providing ‘source=hmrc-held’ will result in the expected HTTP 404 (matching resource not found) error being returned. </p> |
+      tags:
+        - Winter Fuel Payment
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2026-27. No gaps are allowed, for example, 2026-28 is not valid.
+          schema: &ref_25
+            type: string
+            example: 2026-27
+          required: true
+        - in: query
+          name: source
+          description: |
+            Specifies the source of data to be returned. If source is not provided,
+            the latest submitted values will be returned.
+          schema:
+            type: string
+            enum:
+              - hmrc-held
+              - user
+              - latest
+            example: latest
+          required: false
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_8
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *read:self-assessment* scope.
+          schema: *ref_19
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+      responses:
+        '200':
+          description: Success
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                $schema: http://json-schema.org/draft-04/schema#
+                title: Retrieve Winter Fuel Payment
+                description: Retrieve Winter Fuel Payment
+                type: object
+                properties:
+                  submittedOn:
+                    type: string
+                    description: The date and time the Winter Fuel Payment was submitted, in the format YYYY-MM-DDThh:mm:ss.SSSZ
+                    format: date-time
+                    example: '2026-08-24T14:15:22.544Z'
+                  source:
+                    type: string
+                    description: Indicates the source of the data returned.
+                    enum:
+                      - hmrc-held
+                      - user
+                  winterFuelPayment:
+                    type: number
+                    description: The amount of Winter Fuel Payment received. The value must be either zero or a valid amount for the tax year up to 2 decimal places.
+                    example: 220.99
+                    multipleOf: 0.01
+                    minimum: 0
+                    maximum: 99999999999.99
+                additionalProperties: false
+                required:
+                  - submittedOn
+                  - winterFuelPayment
+                  - source
+              examples:
+                User provided Winter Fuel Payment details:
+                  value:
+                    $ref: ./examples/winterFuelPayment/retrieve/retrieve_response_user.json
+                HMRC held Winter Fuel Payment details:
+                  value:
+                    $ref: ./examples/winterFuelPayment/retrieve/retrieve_response_hmrc_held.json
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied tax year field is not valid.
+                  value: *ref_11
+                FORMAT_SOURCE:
+                  description: |
+                    The format of the supplied source is not valid.
+                  value:
+                    code: FORMAT_SOURCE
+                    message: The provided source is invalid
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_16
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_12
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_13
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_14
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The matching resource is not found.
+                  value: *ref_18
+    put:
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      summary: Create or Amend Winter Fuel Payment [test only]
+      description: |
+        This endpoint allows a developer to submit or amend the Winter Fuel Payment amount for a tax year.
+        A National Insurance number, tax year and the Winter Fuel Payment amount must be provided. The amount submitted must be either the minimum or maximum payment for that tax year, or zero if no payment was received.
+        This endpoint can only be used for tax years from 2026–27 onwards.
+
+        ###  Test data
+          Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.
+
+          | Header Value (Gov-Test-Scenario) | Scenario                                                                                                                                                                                |
+          |----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+          | N/A - DEFAULT                    | Simulates success response.                                                                                                                                                             |
+          | WFP_AMOUNT_ABOVE_MAXIMUM         | Simulates the scenario where the submitted amount exceeds the maximum Winter Fuel Payment for the tax year.                                                                             |
+          | WFP_AMOUNT_BELOW_MINIMUM         | Simulates the scenario where the submitted amount is below the minimum Winter Fuel Payment for the tax year.                                                                            |
+          | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.                                                                                         |
+          | STATEFUL                         | Performs a stateful create or update. It uses fixed winter fuel payment amounts where 100 is the minimum and 300 is the maximum across all supported tax years for testing purposes.    |
+      tags:
+        - Winter Fuel Payment
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2026-27. No gaps are allowed, for example, 2026-28 is not valid.
+          schema: *ref_25
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_8
+          required: true
+        - name: Content-Type
+          in: header
+          description: |
+            Specifies the format of the request body, which must be JSON.
+          schema: *ref_21
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_15
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+        - name: suspend-temporal-validations
+          in: header
+          description: |
+            Only in the sandbox environment. When supplied and set to `true`, this header relaxes tax year validation rule to 
+            allow in-year submissions for endpoints configured for end-of-year submissions. Not supplying the header or setting 
+            it to `false` results in a `RULE_TAX_YEAR_NOT_ENDED` error for in-year submissions. In Production, the header is
+            ignored and normal validations apply.
+          schema:
+            type: boolean
+            example: true
+          required: false
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $schema: http://json-schema.org/draft-04/schema#
+              title: Create or Amend Winter Fuel Payment
+              description: Create or Amend Winter Fuel Payment
+              type: object
+              properties:
+                winterFuelPayment:
+                  type: number
+                  description: The amount of Winter Fuel Payment received. The value must be either zero or a valid amount for the tax year up to 2 decimal places.
+                  example: 111.22
+                  multipleOf: 0.01
+                  minimum: 0
+                  maximum: 99999999999.99
+              additionalProperties: false
+              required:
+                - winterFuelPayment
+            examples:
+              amendment:
+                description: Winter Fuel Payment Request
+                value:
+                  $ref: ./examples/winterFuelPayment/createAmend/request.json
+      responses:
+        '204':
+          description: No Content
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied tax year field is not valid.
+                  value: *ref_11
+                FORMAT_VALUE:
+                  description: |
+                    One or more values have been added with the incorrect format.
+                  value: *ref_22
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_16
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_12
+                RULE_INCORRECT_OR_EMPTY_BODY_SUBMITTED:
+                  description: |
+                    An empty or non-matching body was submitted.
+                  value: *ref_23
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_13
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: The request cannot be completed as you are outside the amendment window.
+                  value: *ref_17
+                RULE_TAX_YEAR_NOT_ENDED:
+                  description: |
+                    The submission has been made before the taxYear it relates to has ended.
+                  value:
+                    code: RULE_TAX_YEAR_NOT_ENDED
+                    message: The specified tax year has not yet ended
+                RULE_WFP_AMOUNT_ABOVE_MAXIMUM:
+                  description: |
+                    The submitted amount exceeds the maximum Winter Fuel Payment for the tax year.
+                  value:
+                    code: RULE_WFP_AMOUNT_ABOVE_MAXIMUM
+                    message: Amount exceeds the maximum Winter Fuel Payment for the tax year
+                RULE_WFP_AMOUNT_BELOW_MINIMUM:
+                  description: |
+                    The submitted amount is below the minimum Winter Fuel Payment for the tax year.
+                  value:
+                    code: RULE_WFP_AMOUNT_BELOW_MINIMUM
+                    message: Amount is below the minimum Winter Fuel Payment for the tax year
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_14
+    delete:
+      security:
+        - User-Restricted:
+            - write:self-assessment
+      summary: Delete Winter Fuel Payment [test only]
+      description: |
+        This endpoint allows a developer to delete any customer submitted Winter Fuel Payment amount for a tax year.
+        A National Insurance number and tax year must be provided.
+        This endpoint can only be used for tax years from 2026–27 onwards.
+
+        ### Test data
+        Scenario simulation using Gov-Test-Scenario headers is only available in the sandbox environment.  
+
+        | Header Value (Gov-Test-Scenario) | Scenario                                                                                                     |
+        |----------------------------------|--------------------------------------------------------------------------------------------------------------|
+        | N/A - DEFAULT                    | Simulates success response.                                                                                  |
+        | NOT_FOUND                        | Simulates the scenario where no data is found.                                                               |
+        | STATEFUL                         | Performs a stateful delete.                                                                                  |
+        | OUTSIDE_AMENDMENT_WINDOW         | Simulates the scenario where request cannot be completed as it is outside the amendment window.              |
+      tags:
+        - Winter Fuel Payment
+      parameters:
+        - name: nino
+          in: path
+          description: |
+            National Insurance number, in the format `AA999999A`
+          schema: *ref_6
+          required: true
+        - name: taxYear
+          in: path
+          description: |
+            The tax year to which the data applies. The start year and end year must not span two tax years. The minimum tax year is 2026-27. No gaps are allowed, for example, 2026-28 is not valid.
+          schema: *ref_25
+          required: true
+        - name: Accept
+          in: header
+          description: |
+            Specifies the response format and the version of the API to be used.
+          schema: *ref_8
+          required: true
+        - name: Authorization
+          in: header
+          description: |
+            An OAuth 2.0 Bearer Token with the *write:self-assessment* scope.
+          schema: *ref_15
+          required: true
+        - name: Gov-Test-Scenario
+          in: header
+          description: |
+            Only in sandbox environment. See Test Data table for all header values.
+          schema: *ref_9
+          required: false
+      responses:
+        '204':
+          description: No Content
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+        '400':
+          description: Bad request
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                FORMAT_NINO:
+                  description: |
+                    The format of the supplied NINO field is not valid.
+                  value: *ref_10
+                FORMAT_TAX_YEAR:
+                  description: |
+                    The format of the supplied tax year field is not valid.
+                  value: *ref_11
+                RULE_TAX_YEAR_NOT_SUPPORTED:
+                  description: |
+                    The specified tax year is not supported. Either the tax year specified is before the minimum tax year value, or it is after the maximum tax year value.
+                  value: *ref_12
+                RULE_TAX_YEAR_RANGE_INVALID:
+                  description: |
+                    Tax year range invalid. A tax year range of one year is required.
+                  value: *ref_16
+                RULE_INCORRECT_GOV_TEST_SCENARIO:
+                  description: |
+                    The request did not match any available Sandbox data. Check that the supplied Gov-Test-Scenario is correct for this endpoint version. This error will only be returned in the Sandbox environment.
+                  value: *ref_13
+                RULE_OUTSIDE_AMENDMENT_WINDOW:
+                  description: The request cannot be completed as you are outside the amendment window.
+                  value: *ref_17
+        '403':
+          description: Forbidden
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                CLIENT_OR_AGENT_NOT_AUTHORISED:
+                  description: |
+                    The client and/or agent is not authorised. This is normally because: the client is not subscribed to MTD, the agent is not subscribed to Agent Services, or the client has not authorised the agent to act on their behalf.
+                  value: *ref_14
+        '404':
+          description: Not Found
+          headers:
+            X-CorrelationId:
+              in: header
+              type: string
+              description: |
+                Unique ID for operation tracking
+                String, 36 characters.
+              schema: *ref_0
+              required: true
+            Deprecation:
+              name: Deprecation
+              in: header
+              description: |
+                The deprecation date/time for this endpoint.
+              schema: *ref_1
+              required: false
+            Sunset:
+              name: Sunset
+              in: header
+              description: |
+                The earliest date/time this endpoint will become unavailable after deprecation.
+              schema: *ref_2
+              required: false
+            Link:
+              name: Link
+              in: header
+              description: |
+                See the API documentation:
+              schema: *ref_3
+              required: false
+          content:
+            application/json:
+              schema:
+                description: Error Response
+                type: object
+                properties: *ref_4
+                required: *ref_5
+              examples:
+                MATCHING_RESOURCE_NOT_FOUND:
+                  description: |
+                    The matching resource is not found.
+                  value: *ref_18
 components:
   securitySchemes:
     User-Restricted:
