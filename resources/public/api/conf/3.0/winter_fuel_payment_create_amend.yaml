@@ -40,8 +40,7 @@ requestBody:
         amendment:
           description:
             Winter Fuel Payment Request
-          value:
-            $ref: './examples/winterFuelPayment/createAmend/request.json'
+          externalValue: './examples/winterFuelPayment/createAmend/request.json'
 
 
 responses:
