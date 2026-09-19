@@ -49,11 +49,9 @@ responses:
           $ref: './schemas/winterFuelPayment/retrieve/retrieve_response_schema.json'
         examples:
           "User provided Winter Fuel Payment details":
-            value:
-              $ref: './examples/winterFuelPayment/retrieve/retrieve_response_user.json'
+            externalValue: './examples/winterFuelPayment/retrieve/retrieve_response_user.json'
           "HMRC held Winter Fuel Payment details":
-            value:
-              $ref: './examples/winterFuelPayment/retrieve/retrieve_response_hmrc_held.json'
+            externalValue: './examples/winterFuelPayment/retrieve/retrieve_response_hmrc_held.json'
 
   "400":
     description: Bad request
