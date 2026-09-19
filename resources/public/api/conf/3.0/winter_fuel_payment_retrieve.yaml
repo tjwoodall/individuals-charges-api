@@ -1,4 +1,4 @@
-summary: "Retrieve Winter Fuel Payment [test only]"
+summary: Retrieve Winter Fuel Payment
 description: |
   This endpoint allows a developer to retrieve any customer submitted Winter Fuel Payment amount for a tax year.
   A National Insurance number and tax year must be provided.

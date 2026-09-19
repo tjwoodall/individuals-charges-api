@@ -1,4 +1,4 @@
-summary: "Delete Winter Fuel Payment [test only]"
+summary: Delete Winter Fuel Payment
 description: |
   This endpoint allows a developer to delete any customer submitted Winter Fuel Payment amount for a tax year.
   A National Insurance number and tax year must be provided.
