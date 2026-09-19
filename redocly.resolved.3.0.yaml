@@ -2845,7 +2845,7 @@ paths:
       security:
         - User-Restricted:
             - read:self-assessment
-      summary: Retrieve Winter Fuel Payment [test only]
+      summary: Retrieve Winter Fuel Payment
       description: |
         This endpoint allows a developer to retrieve any customer submitted Winter Fuel Payment amount for a tax year.
         A National Insurance number and tax year must be provided.
@@ -3139,7 +3139,7 @@ paths:
       security:
         - User-Restricted:
             - write:self-assessment
-      summary: Create or Amend Winter Fuel Payment [test only]
+      summary: Create or Amend Winter Fuel Payment
       description: |
         This endpoint allows a developer to submit or amend the Winter Fuel Payment amount for a tax year.
         A National Insurance number, tax year and the Winter Fuel Payment amount must be provided. The amount submitted must be either the minimum or maximum payment for that tax year, or zero if no payment was received.
@@ -3400,7 +3400,7 @@ paths:
       security:
         - User-Restricted:
             - write:self-assessment
-      summary: Delete Winter Fuel Payment [test only]
+      summary: Delete Winter Fuel Payment
       description: |
         This endpoint allows a developer to delete any customer submitted Winter Fuel Payment amount for a tax year.
         A National Insurance number and tax year must be provided.
