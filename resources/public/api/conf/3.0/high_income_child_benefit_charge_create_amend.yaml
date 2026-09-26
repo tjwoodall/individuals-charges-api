@@ -38,13 +38,11 @@ requestBody:
         full_amendment:
           description:
             Full High Income Child Benefit Charge Submission Amendment
-          value:
-            $ref: './examples/highIncomeChildBenefitCharge/createAmend/full_request.json'
+          externalValue: './examples/highIncomeChildBenefitCharge/createAmend/full_request.json'
         minimal_amendment:
           description:
             Minimal High Income Child Benefit Charge Submission Amendment
-          value:
-            $ref: './examples/highIncomeChildBenefitCharge/createAmend/minimal_request.json'
+          externalValue: './examples/highIncomeChildBenefitCharge/createAmend/minimal_request.json'
 
 
 responses:
