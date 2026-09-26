@@ -150,7 +150,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
+                anyOf:
                   - $schema: http://json-schema.org/draft-04/schema#
                     title: Tax years before 2024-25
                     description: Retrieve Pension Charges
@@ -904,7 +904,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
+              anyOf:
                 - $schema: http://json-schema.org/draft-04/schema#
                   title: Tax years before 2024-25
                   description: Create and Amend Pension Charges
